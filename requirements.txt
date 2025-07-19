@@ -1,0 +1,8 @@
+Flask
+Flask-CORS
+supabase
+python-dotenv
+passlib
+bcrypt
+smtplib
+email-validator

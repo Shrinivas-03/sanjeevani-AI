@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 
-func_bp = Blueprint('functionality', __name__, template_folder='../templates')
+# Change the blueprint name from 'functionality' to 'func' to match app registration
+func_bp = Blueprint('func', __name__, template_folder='../templates')
 
 @func_bp.route('/dashboard')
 def dashboard():

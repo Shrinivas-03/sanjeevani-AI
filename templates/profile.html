@@ -38,7 +38,7 @@
         <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
             <img src="{{url_for('static',filename='images/logo.png')}}" alt="Logo" class="w-10 h-10 md:w-12 md:h-12 mr-3">
-            <a href="{{ url_for('functionality.dashboard') }}" class="text-lg md:text-xl font-bold hover:text-gray-200">SANJEEVANI AI</a>
+            <a href="{{ url_for('func.dashboard') }}" class="text-lg md:text-xl font-bold hover:text-gray-200">SANJEEVANI AI</a>
           </div>
           
           <!-- Mobile menu button -->
@@ -52,7 +52,7 @@
 
           <!-- Desktop menu -->
           <div class="hidden md:flex items-center space-x-4">
-            <a href="{{ url_for('functionality.dashboard') }}" class="px-3 py-2 rounded-2xl hover:bg-[#38b2ac]">Home</a>
+            <a href="{{ url_for('func.dashboard') }}" class="px-3 py-2 rounded-2xl hover:bg-[#38b2ac]">Home</a>
             <div class="relative">
               <button id="profileDropdownBtn" class="flex items-center justify-center w-10 h-10 rounded-full bg-[#38b2ac] transition duration-300">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,8 +60,8 @@
                 </svg>
               </button>
               <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg py-2 z-50">
-                <a href="{{ url_for('functionality.profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">View Profile</a>
-                <a href="{{ url_for('functionality.prediction_history') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Prediction History</a>
+                <a href="{{ url_for('func.profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">View Profile</a>
+                <a href="{{ url_for('func.prediction_history') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Prediction History</a>
                 <a href="/" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Log out</a>
               </div>
             </div>
@@ -70,9 +70,9 @@
 
         <!-- Mobile menu -->
         <div id="mobile-menu" class="hidden md:hidden pb-4">
-          <a href="{{ url_for('functionality.dashboard') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">Home</a>
-          <a href="{{ url_for('functionality.profile') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">View Profile</a>
-          <a href="{{ url_for('functionality.prediction_history') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">Prediction History</a>
+          <a href="{{ url_for('func.dashboard') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">Home</a>
+          <a href="{{ url_for('func.profile') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">View Profile</a>
+          <a href="{{ url_for('func.prediction_history') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">Prediction History</a>
           <a href="/" class="block px-3 py-2 rounded hover:bg-[#38b2ac] text-red-100">Log out</a>
         </div>
       </div>

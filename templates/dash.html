@@ -59,8 +59,8 @@
                 </svg>
               </button>
               <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg py-2 z-50">
-                <a href="{{ url_for('functionality.profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">View Profile</a>
-                <a href="{{ url_for('functionality.prediction_history') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Prediction History</a>
+                <a href="{{ url_for('func.profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">View Profile</a>
+                <a href="{{ url_for('func.prediction_history') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Prediction History</a>
                 <a href="/" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Log out</a>
               </div>
             </div>
@@ -69,8 +69,8 @@
 
         <!-- Mobile menu -->
         <div id="mobile-menu" class="hidden md:hidden pb-4">
-          <a href="{{ url_for('functionality.profile') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">View Profile</a>
-          <a href="{{ url_for('functionality.prediction_history') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">Prediction History</a>
+          <a href="{{ url_for('func.profile') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">View Profile</a>
+          <a href="{{ url_for('func.prediction_history') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">Prediction History</a>
           <a href="/" class="block px-3 py-2 rounded hover:bg-[#38b2ac] text-red-100">Log out</a>
         </div>
       </div>
@@ -256,7 +256,7 @@
       }
     });
 
-    // Tab switching functionality
+    // Tab switching func
     const predictionTab = document.getElementById('predictionTab');
     const chatTab = document.getElementById('chatTab');
     const predictionSection = document.getElementById('predictionSection');
@@ -280,7 +280,7 @@
       predictionTab.classList.add('text-gray-600');
     });
 
-    // Chat functionality
+    // Chat func
     const chatForm = document.getElementById('chatForm');
     const userInput = document.getElementById('userInput');
     const messagesContainer = document.getElementById('messagesContainer');
@@ -475,7 +475,7 @@ Please note: This is an initial assessment and not a definitive diagnosis. Consu
       }
     });
 
-    // Tab switching functionality
+    // Tab switching func
     const predictionTab = document.getElementById('predictionTab');
     const chatTab = document.getElementById('chatTab');
     const predictionSection = document.getElementById('predictionSection');
@@ -499,7 +499,7 @@ Please note: This is an initial assessment and not a definitive diagnosis. Consu
       predictionTab.classList.add('text-gray-600');
     });
 
-    // Chat functionality
+    // Chat func
     const chatForm = document.getElementById('chatForm');
     const userInput = document.getElementById('userInput');
     const messagesContainer = document.getElementById('messagesContainer');

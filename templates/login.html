@@ -41,29 +41,31 @@
                     <h2 class="text-2xl font-semibold text-[#2c7a7b] tracking-tight">SANJEEVANI AI</h2>
                 </div>
 
-                <form class="space-y-6">
+                <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}" class="space-y-6">
                     <div class="relative">
-                        <input type="email" placeholder="Email" 
+                        <input type="email" name="email" id="email" placeholder="Email" required
                             class="w-full p-3 pl-3 pr-10 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-[#2c7a7b] text-gray-800 placeholder-gray-600 font-medium">
                         <svg class="w-5 h-5 text-gray-400 absolute right-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                         </svg>
+                        <span class="error-message text-red-500 text-xs hidden block mt-1" id="email_error"></span>
                     </div>
                     <div class="relative">
-                        <input type="password" placeholder="Password" 
+                        <input type="password" name="password" id="password" placeholder="Password" required
                             class="w-full p-3 pl-3 pr-10 border-b-2 border-gray-600 bg-transparent focus:outline-none focus:border-[#2c7a7b] text-gray-800 placeholder-gray-600 font-medium">
                         <svg class="w-5 h-5 text-gray-400 absolute right-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
+                        <span class="error-message text-red-500 text-xs hidden block mt-1" id="password_error"></span>
                     </div>
-                    <button type="submit" 
-                        class="w-48 mx-auto block bg-[#2c7a7b] text-white py-2 px-4 rounded-2xl hover:bg-[#38b2ac] transition duration-300">
+                    <button type="submit" id="loginBtn"
+                        class="w-48 mx-auto block bg-[#2c7a7b] text-white py-2 px-4 rounded-2xl hover:bg-[#38b2ac] transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                         Login
                     </button>
                 </form>
 
                 <div class="mt-4 text-center text-sm">
-                    <a href="#" class="text-[#2c7a7b] hover:underline">Forgot Password?</a>
+                    <a href="{{ url_for('auth.forgot_password') }}" class="text-[#2c7a7b] hover:underline">Forgot Password?</a>
                     <div class="mt-2">
                         <span class="text-gray-600">Don't have an account? </span>
                         <a href="{{url_for('auth.register')}}" class="text-[#2c7a7b] underline hover:no-underline">Sign up</a>
@@ -72,5 +74,127 @@
             </div>
         </div>
     </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('loginBtn');
+
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validateField(fieldName) {
+        const field = document.getElementById(fieldName);
+        const errorElement = document.getElementById(fieldName + '_error');
+        let isValid = true;
+        let message = '';
+
+        if (fieldName === 'email') {
+            if (!field.value.trim()) {
+                isValid = false;
+                message = 'Email is required';
+            } else if (!validateEmail(field.value)) {
+                isValid = false;
+                message = 'Please enter a valid email address';
+            }
+        } else if (fieldName === 'password') {
+            if (!field.value.trim()) {
+                isValid = false;
+                message = 'Password is required';
+            } else if (field.value.length < 6) {
+                isValid = false;
+                message = 'Password must be at least 6 characters';
+            }
+        }
+
+        if (isValid) {
+            field.classList.remove('border-red-500');
+            errorElement.textContent = '';
+            errorElement.classList.add('hidden');
+        } else {
+            field.classList.add('border-red-500');
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        return isValid;
+    }
+
+    function validateForm() {
+        const emailValid = validateField('email');
+        const passwordValid = validateField('password');
+        const isValid = emailValid && passwordValid;
+        
+        submitBtn.disabled = !isValid;
+        return isValid;
+    }
+
+    // Add event listeners
+    document.getElementById('email').addEventListener('blur', () => validateField('email'));
+    document.getElementById('password').addEventListener('blur', () => validateField('password'));
+    document.getElementById('email').addEventListener('input', validateForm);
+    document.getElementById('password').addEventListener('input', validateForm);
+
+    form.addEventListener('submit', function(e) {
+        if (!validateForm()) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(loginForm);
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+            
+            // Show loading state
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = 'Logging in...';
+            }
+            
+            fetch(loginForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // Show error message
+                    alert(data.error);
+                } else {
+                    // Success - redirect to dashboard
+                    console.log('Login successful, redirecting to:', data.redirect_url);
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during login. Please try again.');
+            })
+            .finally(() => {
+                // Reset button state
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'Login';
+                }
+            });
+        });
+    }
+});
+</script>
 </body>
 </html>
