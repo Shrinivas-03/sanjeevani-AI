@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanjeevani AI Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    ::placeholder {
+        font-weight: normal;
+        opacity: 0.8;
+        color: #020c0c;
+    }
+    input::placeholder,
+    textarea::placeholder,
+    select:invalid {
+        font-weight: normal;
+        opacity: 0.8;
+        color: #020808;
+    }
+    select option {
+        font-weight: normal;
+        color: #2c7a7b;
+    }
+  </style>
+</head>
+<body class="min-h-screen font-sans relative">
+  <!-- Background Image -->
+  <div class="fixed inset-0 z-0 flex items-center justify-center bg-[#f0f7ff]">
+    <img src="{{url_for('static',filename='images/sam.jpeg')}}" alt="Background" class="w-full h-full object-cover">
+  </div>
+
+  <!-- Main Container with overlay -->
+  <div class="relative z-10">
+    <!-- Navbar -->
+    <nav class="bg-[#2c7a7b] text-white">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <img src="{{url_for('static',filename='images/logo.png')}}" alt="Logo" class="w-10 h-10 md:w-12 md:h-12 mr-3">
+            <h2 class="text-lg md:text-xl font-bold">SANJEEVANI AI</h2>
+          </div>
+          
+          <!-- Mobile menu button -->
+          <div class="md:hidden">
+            <button id="hamburger" class="text-white p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Desktop menu -->
+          <div class="hidden md:flex items-center space-x-4">
+            <div class="relative">
+              <button id="profileDropdownBtn" class="flex items-center justify-center w-10 h-10 rounded-full bg-[#1a4e4e] hover:bg-[#38b2ac] transition duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </button>
+              <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg py-2 z-50">
+                <a href="{{ url_for('functionality.profile') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">View Profile</a>
+                <a href="{{ url_for('functionality.prediction_history') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Prediction History</a>
+                <a href="/" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Log out</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden pb-4">
+          <a href="{{ url_for('functionality.profile') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">View Profile</a>
+          <a href="{{ url_for('functionality.prediction_history') }}" class="block px-3 py-2 rounded hover:bg-[#38b2ac]">Prediction History</a>
+          <a href="/" class="block px-3 py-2 rounded hover:bg-[#38b2ac] text-red-100">Log out</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Tab Navigation Section -->
+    <div class="bg-white/10 backdrop-blur-sm border-b border-gray-300/30">
+      <div class="container mx-auto px-4">
+        <div class="flex space-x-8">
+          <button id="predictionTab" class="px-6 py-4 text-gray-800 border-b-2 border-[#2c7a7b] font-semibold bg-white/20 hover:bg-white/30 transition-colors">
+            Prediction
+          </button>
+          <button id="chatTab" class="px-6 py-4 text-gray-600 hover:text-gray-800 font-semibold hover:bg-white/20 transition-colors">
+            AI Chat
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container mx-auto px-4 py-6">
+      <!-- Prediction Section -->
+      <div id="predictionSection" class="bg-black/5 backdrop-blur-sm p-5 rounded-3xl shadow-lg max-w-5xl mx-auto min-h-[90vh]">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Disease Prediction</h3>
+        
+        <!-- Required Information Section -->
+        <div class="mb-6">
+          <p class="font-bold mb-3 text-lg border-b pb-2">Required Information</p>
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <input type="text" placeholder="Name" class="w-full p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+            <input type="number" placeholder="Age" class="w-full p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+          </div>
+          <div class="mb-4">
+            <select class="w-full p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Optional Details Section -->
+        <div class="mb-6">
+          <p class="font-bold mb-3 text-lg border-b pb-2">Optional Details</p>
+          
+          <!-- Height with unit selection -->
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div class="flex gap-2">
+              <input type="number" placeholder="Height" class="flex-1 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+              <select class="w-24 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+                <option value="cm">cm</option>
+                <option value="ft">feet</option>
+              </select>
+            </div>
+            
+            <!-- Weight with unit selection -->
+            <div class="flex gap-2">
+              <input type="number" placeholder="Weight" class="flex-1 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+              <select class="w-24 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+                <option value="kg">kg</option>
+                <option value="lbs">lbs</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <input type="number" placeholder="Pulse Rate" class="w-full p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+            
+            <!-- Temperature with unit selection -->
+            <div class="flex gap-2">
+              <input type="number" placeholder="Temperature" class="flex-1 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+              <select class="w-24 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+                <option value="celsius">°C</option>
+                <option value="fahrenheit">°F</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <input type="number" placeholder="BP Systolic" class="w-full p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+            <input type="number" placeholder="BP Diastolic" class="w-full p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+          </div>
+
+          <!-- Diabetes readings with unit selection -->
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div class="flex gap-2">
+              <input type="number" placeholder="Diabetes FBS" class="flex-1 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+              <select class="w-24 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+                <option value="mgdl">mg/dL</option>
+                <option value="mmol">mmol/L</option>
+              </select>
+            </div>
+            <div class="flex gap-2">
+              <input type="number" placeholder="Diabetes PPBS" class="flex-1 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+              <select class="w-24 p-2 border-b-2 border-gray-800 bg-transparent rounded-none focus:outline-none focus:border-[#2c7a7b]">
+                <option value="mgdl">mg/dL</option>
+                <option value="mmol">mmol/L</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Medical History Section -->
+        <div class="mb-6">
+          <p class="font-bold mb-3 text-lg border-b pb-2">Medical History</p>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
+            <label class="flex items-center"><input type="checkbox" class="mr-2"> Diabetes</label>
+            <label class="flex items-center"><input type="checkbox" class="mr-2"> Hypertension (BP)</label>
+            <label class="flex items-center"><input type="checkbox" class="mr-2"> Thyroid</label>
+            <label class="flex items-center"><input type="checkbox" class="mr-2"> Heart Disease</label>
+            <label class="flex items-center"><input type="checkbox" class="mr-2"> Other</label>
+          </div>
+        </div>
+
+        <!-- Symptoms Section -->
+        <p class="font-bold mb-3">Symptoms</p>
+        <div class="relative">
+          <textarea 
+            class="w-full p-3 border border-gray-300 rounded-2xl resize-y min-h-[100px] max-h-[300px] bg-transparent backdrop-blur-sm 
+            placeholder-gray-500 focus:border-[#2c7a7b] focus:ring-2 focus:ring-[#2c7a7b]/20 transition-all duration-300
+            hover:border-[#2c7a7b]/50"
+            placeholder="Enter your symptoms..."
+          ></textarea>
+          <div class="absolute inset-0 bg-white/10 rounded-2xl pointer-events-none"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-6">
+          <button class="bg-[#2c7a7b] text-white px-6 py-2 rounded-2xl hover:bg-[#38b2ac] hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-[#2c7a7b]/20">
+            Submit
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Section -->
+      <div id="chatSection" class="hidden bg-black/5 backdrop-blur-sm p-5 rounded-3xl shadow-lg max-w-5xl mx-auto min-h-[90vh]">
+        <div class="border-b pb-4 mb-4">
+          <h3 class="text-xl font-bold text-gray-800">AI Health Assistant</h3>
+        </div>
+        
+        <!-- Chat Messages Container -->
+        <div id="messagesContainer" class="h-[70vh] overflow-y-auto space-y-4 mb-4 p-4 border border-gray-300 rounded-2xl bg-white/10">
+          <!-- Initial AI greeting -->
+          <div class="flex items-start">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 rounded-full bg-[#2c7a7b] flex items-center justify-center">
+                <span class="text-white text-sm">AI</span>
+              </div>
+            </div>
+            <div class="ml-3 bg-[#e7f1ed] p-3 rounded-lg max-w-[80%]">
+              <p>Hello! I'm your AI health assistant. Please describe your symptoms in detail, and I'll help analyze them.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="border-t pt-4">
+          <form id="chatForm" class="flex gap-2">
+            <input type="text" id="userInput" placeholder="Describe your symptoms..." 
+              class="flex-1 p-2 border border-gray-300 rounded-2xl focus:outline-none focus:border-[#2c7a7b]">
+            <button type="submit" class="bg-[#2c7a7b] text-white px-6 py-2 rounded-2xl hover:bg-[#38b2ac] transition duration-300">
+              Send
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+      }
+    });
+
+    // Tab switching functionality
+    const predictionTab = document.getElementById('predictionTab');
+    const chatTab = document.getElementById('chatTab');
+    const predictionSection = document.getElementById('predictionSection');
+    const chatSection = document.getElementById('chatSection');
+
+    predictionTab.addEventListener('click', () => {
+      predictionSection.classList.remove('hidden');
+      chatSection.classList.add('hidden');
+      predictionTab.classList.add('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      predictionTab.classList.remove('text-gray-600');
+      chatTab.classList.remove('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      chatTab.classList.add('text-gray-600');
+    });
+
+    chatTab.addEventListener('click', () => {
+      chatSection.classList.remove('hidden');
+      predictionSection.classList.add('hidden');
+      chatTab.classList.add('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      chatTab.classList.remove('text-gray-600');
+      predictionTab.classList.remove('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      predictionTab.classList.add('text-gray-600');
+    });
+
+    // Chat functionality
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+    const messagesContainer = document.getElementById('messagesContainer');
+
+    function addMessage(content, isUser = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex items-start ${isUser ? 'justify-end' : ''}`;
+      
+      const message = `
+        ${isUser ? `
+          <div class="mr-3 bg-[#2c7a7b] text-white p-3 rounded-lg max-w-[80%]">
+            <p>${content}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+              <span class="text-gray-600 text-sm">U</span>
+            </div>
+          </div>
+        ` : `
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-[#2c7a7b] flex items-center justify-center">
+              <span class="text-white text-sm">AI</span>
+            </div>
+          </div>
+          <div class="ml-3 bg-[#e7f1ed] p-3 rounded-lg max-w-[80%]">
+            <p>${content}</p>
+          </div>
+        `}
+      `;
+      
+      messageDiv.innerHTML = message;
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function analyzeSymptomsAndRespond(symptoms) {
+      // Simple keyword-based analysis (replace with actual AI logic)
+      const keywords = {
+        'fever': ['Common Cold', 'Flu', 'COVID-19'],
+        'headache': ['Tension Headache', 'Migraine', 'Sinusitis'],
+        'cough': ['Bronchitis', 'Common Cold', 'COVID-19'],
+        'fatigue': ['Anemia', 'Depression', 'Thyroid Issues'],
+        'chest pain': ['Angina', 'Heart Disease', 'Acid Reflux'],
+      };
+
+      let possibleDiseases = new Set();
+      const symptomsLower = symptoms.toLowerCase();
+      
+      Object.entries(keywords).forEach(([keyword, diseases]) => {
+        if (symptomsLower.includes(keyword)) {
+          diseases.forEach(disease => possibleDiseases.add(disease));
+        }
+      });
+
+      if (possibleDiseases.size === 0) {
+        return "I need more specific symptoms to make a proper assessment. Could you please provide more details about what you're experiencing?";
+      }
+
+      const diseasesList = Array.from(possibleDiseases);
+      return `Based on your symptoms, here are potential conditions to discuss with a healthcare provider:
+      
+${diseasesList.map((disease, index) => `${index + 1}. ${disease}`).join('\n')}
+
+Please note: This is an initial assessment and not a definitive diagnosis. Consult a healthcare professional for proper evaluation.`;
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      // Add user message
+      addMessage(message, true);
+      userInput.value = '';
+
+      // Simulate AI response with small delay
+      setTimeout(() => {
+        const response = analyzeSymptomsAndRespond(message);
+        addMessage(response);
+      }, 1000);
+    });
+
+    // Profile Dropdown Toggle
+    const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    profileDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+      profileDropdown.classList.add('hidden');
+    });
+  </script>
+
+</body>
+</html>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-800">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-400">
+                <tr class="hover:bg-black/5">
+                  <td class="px-6 py-4 text-sm text-gray-800">2024-01-20</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">COVID-19</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">Low Probability</td>
+                  <td class="px-6 py-4">
+                    <button class="text-red-500 hover:text-red-700 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-black/5">
+                  <td class="px-6 py-4 text-sm text-gray-800">2024-01-18</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">Sinusitis</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">High Probability</td>
+                  <td class="px-6 py-4">
+                    <button class="text-red-500 hover:text-red-700 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <!-- Add more rows as needed -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Last 10 Transactions Section -->
+        <div id="last10Section" class="hidden">
+          <div class="overflow-x-auto mb-4">
+            <table class="w-full">
+              <thead class="border-b-2 border-gray-600">
+                <tr>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-800">Date</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-800">Disease</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-800">Result</th>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-gray-800">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-400">
+                <tr class="hover:bg-black/5">
+                  <td class="px-6 py-4 text-sm text-gray-800">2024-01-20</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">COVID-19</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">Low Probability</td>
+                  <td class="px-6 py-4">
+                    <button class="text-red-500 hover:text-red-700 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-black/5">
+                  <td class="px-6 py-4 text-sm text-gray-800">2024-01-18</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">Sinusitis</td>
+                  <td class="px-6 py-4 text-sm text-gray-800">High Probability</td>
+                  <td class="px-6 py-4">
+                    <button class="text-red-500 hover:text-red-700 transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+                <!-- Add more rows up to 10 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+        mobileMenu.classList.add('hidden');
+      }
+    });
+
+    // Tab switching functionality
+    const predictionTab = document.getElementById('predictionTab');
+    const chatTab = document.getElementById('chatTab');
+    const predictionSection = document.getElementById('predictionSection');
+    const chatSection = document.getElementById('chatSection');
+
+    predictionTab.addEventListener('click', () => {
+      predictionSection.classList.remove('hidden');
+      chatSection.classList.add('hidden');
+      predictionTab.classList.add('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      predictionTab.classList.remove('text-gray-600');
+      chatTab.classList.remove('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      chatTab.classList.add('text-gray-600');
+    });
+
+    chatTab.addEventListener('click', () => {
+      chatSection.classList.remove('hidden');
+      predictionSection.classList.add('hidden');
+      chatTab.classList.add('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      chatTab.classList.remove('text-gray-600');
+      predictionTab.classList.remove('border-[#2c7a7b]', 'text-gray-800', 'bg-white/20');
+      predictionTab.classList.add('text-gray-600');
+    });
+
+    // Chat functionality
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('userInput');
+    const messagesContainer = document.getElementById('messagesContainer');
+
+    function addMessage(content, isUser = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex items-start ${isUser ? 'justify-end' : ''}`;
+      
+      const message = `
+        ${isUser ? `
+          <div class="mr-3 bg-[#2c7a7b] text-white p-3 rounded-lg max-w-[80%]">
+            <p>${content}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+              <span class="text-gray-600 text-sm">U</span>
+            </div>
+          </div>
+        ` : `
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 rounded-full bg-[#2c7a7b] flex items-center justify-center">
+              <span class="text-white text-sm">AI</span>
+            </div>
+          </div>
+          <div class="ml-3 bg-[#e7f1ed] p-3 rounded-lg max-w-[80%]">
+            <p>${content}</p>
+          </div>
+        `}
+      `;
+      
+      messageDiv.innerHTML = message;
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function analyzeSymptomsAndRespond(symptoms) {
+      // Simple keyword-based analysis (replace with actual AI logic)
+      const keywords = {
+        'fever': ['Common Cold', 'Flu', 'COVID-19'],
+        'headache': ['Tension Headache', 'Migraine', 'Sinusitis'],
+        'cough': ['Bronchitis', 'Common Cold', 'COVID-19'],
+        'fatigue': ['Anemia', 'Depression', 'Thyroid Issues'],
+        'chest pain': ['Angina', 'Heart Disease', 'Acid Reflux'],
+      };
+
+      let possibleDiseases = new Set();
+      const symptomsLower = symptoms.toLowerCase();
+      
+      Object.entries(keywords).forEach(([keyword, diseases]) => {
+        if (symptomsLower.includes(keyword)) {
+          diseases.forEach(disease => possibleDiseases.add(disease));
+        }
+      });
+
+      if (possibleDiseases.size === 0) {
+        return "I need more specific symptoms to make a proper assessment. Could you please provide more details about what you're experiencing?";
+      }
+
+      const diseasesList = Array.from(possibleDiseases);
+      return `Based on your symptoms, here are potential conditions to discuss with a healthcare provider:
+      
+${diseasesList.map((disease, index) => `${index + 1}. ${disease}`).join('\n')}
+
+Please note: This is an initial assessment and not a definitive diagnosis. Consult a healthcare professional for proper evaluation.`;
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      // Add user message
+      addMessage(message, true);
+      userInput.value = '';
+
+      // Simulate AI response with small delay
+      setTimeout(() => {
+        const response = analyzeSymptomsAndRespond(message);
+        addMessage(response);
+      }, 1000);
+    });
+
+    // Profile Dropdown Toggle
+    const profileDropdownBtn = document.getElementById('profileDropdownBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    profileDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+      profileDropdown.classList.add('hidden');
+    });
+
+
+  </script>
+
+</body>
+</html>
